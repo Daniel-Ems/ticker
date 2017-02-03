@@ -14,12 +14,14 @@
 
 enum {LINE_SIZE = 256};
 enum {MAX_CO_SIZE = 64};
+enum {MAX_TICKER_SIZE = 5}
 
 //Code modified from BST code 
 typedef struct stock{
     size_t cost;
 	char *company;
 	char ticker[6];
+	bool isStock;
     struct stock *left;
     struct stock *right;
 } stock;
@@ -43,7 +45,6 @@ stock *Insert(stock *root, size_t cost, char *company, char *ticker)
       else
 	{
 	
-	  	root->cost = cost;
 		if(company == NULL)
 		{
 			root -> company = NULL;
@@ -53,8 +54,10 @@ stock *Insert(stock *root, size_t cost, char *company, char *ticker)
 			root->company = calloc(1, MAX_CO_SIZE);
 			strncpy(root->company, company, MAX_CO_SIZE);
 		}
-		strncpy(root->ticker, ticker, strlen(ticker));
+		root->isStock = false;
+	  	root->cost = cost;
 		root->left = root->right = NULL;
+		strncpy(root->ticker, ticker, strlen(ticker));
 	}
     }
 
@@ -132,13 +135,21 @@ destroy_stocks (stock * tree)
 // This function brings the key at root if key is present in tree.
 // If key is not present, then it brings the last accessed item at
 // root.  This function modifies the tree and returns the new root
-stock *splay(stock *root, stock *test)
+stock *splay(stock *root, char *ticker)
 {
-	int result = strcasecmp(test->ticker, root->ticker);
 
     // Base cases: root is NULL or key is present at root **
-    if (root == NULL || result == 0)
+    if (root == NULL)
+	{
         return root;
+	}
+	
+	int result = strcasecmp(ticker, root->ticker);
+	if (result == 0)
+	{
+		root->isStock = true;
+		return root;
+	}
  
     // Key lies in left subtree **
     if (result < 0)
@@ -146,18 +157,15 @@ stock *splay(stock *root, stock *test)
         // Key is not in tree, we are done
         if (root->left == NULL) 
 		{
-			root->left = test;
-			test->right = test->left = NULL;
-			rightRotate(root);
-			return test;
+			return root;
 		}
  
         // Zig-Zig (Left Left)
-		result = strcasecmp(test->ticker, root->left->ticker);
+		result = strcasecmp(ticker, root->left->ticker);
         if (result < 0)
         {
             // First recursively bring the key as root of left-left
-            root->left->left = splay(root->left->left, test);
+            root->left->left = splay(root->left->left, ticker);
  
             // Do first rotation for root, second rotation is done after else
             root = rightRotate(root);
@@ -165,11 +173,13 @@ stock *splay(stock *root, stock *test)
         else if (result > 0) // Zig-Zag (Left Right)
         {
             // First recursively bring the key as root of left-right
-            root->left->right = splay(root->left->right, test);
+            root->left->right = splay(root->left->right, ticker);
  
             // Do first rotation for root->left
             if (root->left->right != NULL)
-                root->left = rightRotate(root->left);
+				{
+                root->left = leftRotate(root->left);
+				}
         }
  
         // Do second rotation for root
@@ -177,21 +187,19 @@ stock *splay(stock *root, stock *test)
     }
     else // Key lies in right subtree
     {
-		
         // Key is not in tree, we are done
         if (root->right == NULL)
 		{
-			root->right = test;
-			test->right = test->left = NULL;
-			leftRotate(root);
-			return test;
+		
+			return root;
 		} 
-		result = strcasecmp(test->ticker, root->right->ticker);
+
+		result = strcasecmp(ticker, root->right->ticker);
         // Zag-Zig (Right Left)
         if (result < 0)
         {
             // Bring the key as root of right-left
-            root->right->left = splay(root->right->left, test);
+            root->right->left = splay(root->right->left, ticker);
  
             // Do first rotation for root->right
             if (root->right->left != NULL)
@@ -200,7 +208,7 @@ stock *splay(stock *root, stock *test)
         else if (result > 0)// Zag-Zag (Right Right)
         {
             // Bring the key as root of right-right and do first rotation
-            root->right->right = splay(root->right->right, test);
+            root->right->right = splay(root->right->right, ticker);
             root = leftRotate(root);
         }
  
@@ -212,9 +220,9 @@ stock *splay(stock *root, stock *test)
 // The search function for Splay tree.  Note that this function
 // returns the new root of Splay Tree.  If key is present in tree
 // then, it is moved to root.
-stock *search(stock *root, stock *test)
+stock *search(stock *root, char *ticker)
 {
-    return splay(root, test);
+    return splay(root, ticker);
 }
 
 //TODO : rotate-left;
@@ -285,6 +293,7 @@ main (int argc, char *argv[])
  	{
 		token = strtok(buf, " \n\t");
 		strncpy(ticker, token, strlen(token));
+		
 		while(token != NULL)
 		{
 			token = strtok(NULL, ".\t\n");
@@ -311,27 +320,42 @@ main (int argc, char *argv[])
 		memset(ticker, '\0', strlen(ticker));
 	
 	}
-		print_node(tree);
+	print_node(tree);
+	
+	while(fgets(buf, LINE_SIZE, stdin))
+ 	{
+		token = strtok(buf, " \n\t");
+		strncpy(ticker, token, strlen(token));
+		tree = search(tree, ticker);
+		while(token != NULL)
+		{
+			token = strtok(NULL, ".\t\n");
+			if(token == NULL
+			cost = strtol(token, NULL, 10);
+			cost *= 100;
+			token = strtok(NULL, " \n");
+			cost += strtol(token, NULL, 10);
+			
+			
+			
+		}
+		tree = Insert(tree, cost, company, ticker);
+		memset(buf, '\0', strlen(buf));
+		//memset(company, '\0', strlen(company));
+		memset(ticker, '\0', strlen(ticker));
+	
+	}
+		
 
-		stock *test = calloc(1,sizeof(stock));
-		char *term = calloc(1,6);
-		size_t thing = 1234;
-		strncpy(term, "FFF\0", 6);
-		strncpy(test->ticker, term, strlen(term));
-		test->company = NULL;
-		test->cost = thing;
-		test->right = test->left = NULL;
-
-		tree = search(tree, test);
 
 		puts(" ");
 		printf("%s %zd \n", tree->ticker, tree->cost);
 		puts(" ");
 
-		free(term);
+		//free(term);
 		print_node(tree);
 		destroy_stocks(tree);
-		free(test);
+		//free(test);
 		free(company);
 		free(buffer);
 		fclose(stockFile);
