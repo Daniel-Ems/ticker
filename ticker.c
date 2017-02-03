@@ -14,7 +14,7 @@
 
 enum {LINE_SIZE = 256};
 enum {MAX_CO_SIZE = 64};
-enum {MAX_TICKER_SIZE = 5}
+enum {MAX_TICKER_SIZE = 6};
 
 //Code modified from BST code 
 typedef struct stock{
@@ -327,21 +327,21 @@ main (int argc, char *argv[])
 		token = strtok(buf, " \n\t");
 		strncpy(ticker, token, strlen(token));
 		tree = search(tree, ticker);
+		printf("%s\n", tree->isStock ? "true" : "false");
 		while(token != NULL)
 		{
 			token = strtok(NULL, ".\t\n");
-			if(token == NULL
 			cost = strtol(token, NULL, 10);
 			cost *= 100;
 			token = strtok(NULL, " \n");
 			cost += strtol(token, NULL, 10);
-			
+			token = NULL;
 			
 			
 		}
 		tree = Insert(tree, cost, company, ticker);
 		memset(buf, '\0', strlen(buf));
-		//memset(company, '\0', strlen(company));
+		memset(company, '\0', strlen(company));
 		memset(ticker, '\0', strlen(ticker));
 	
 	}
