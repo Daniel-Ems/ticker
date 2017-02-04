@@ -8,7 +8,6 @@ stock *Insert(stock *root, int cost, char *company, char *ticker)
 
   if (root == NULL)
     {
-
       root = calloc (1,sizeof (stock));
       if (root == NULL)
 	{
@@ -24,7 +23,7 @@ stock *Insert(stock *root, int cost, char *company, char *ticker)
 		}
 		else 
 		{
-			root->company = calloc(1, MAX_CO_SIZE);
+			root->company = calloc(1, MAX_CO_SIZE+1);
 			strncpy(root->company, company, MAX_CO_SIZE);
 		}
 		
@@ -71,12 +70,8 @@ stock *leftRotate(stock *root)
 	return temp;
 }
 
-stock *search(stock *root, char *ticker)
-{
-    return splay(root, ticker);
-}
 
-stock *splay(stock *root, char *ticker)
+stock *search(stock *root, char *ticker)
 {
 
     // Base cases: root is NULL or key is present at root **
@@ -105,7 +100,7 @@ stock *splay(stock *root, char *ticker)
         if (result < 0)
         {
             // First recursively bring the key as root of left-left
-            root->left->left = splay(root->left->left, ticker);
+            root->left->left = search(root->left->left, ticker);
  
             // Do first rotation for root, second rotation is done after else
             root = rightRotate(root);
@@ -113,7 +108,7 @@ stock *splay(stock *root, char *ticker)
         else if (result > 0) // Zig-Zag (Left Right)
         {
             // First recursively bring the key as root of left-right
-            root->left->right = splay(root->left->right, ticker);
+            root->left->right = search(root->left->right, ticker);
  
             // Do first rotation for root->left
             if (root->left->right != NULL)
@@ -139,7 +134,7 @@ stock *splay(stock *root, char *ticker)
         if (result < 0)
         {
             // Bring the key as root of right-left
-            root->right->left = splay(root->right->left, ticker);
+            root->right->left = search(root->right->left, ticker);
  
             // Do first rotation for root->right
             if (root->right->left != NULL)
@@ -148,13 +143,30 @@ stock *splay(stock *root, char *ticker)
         else if (result > 0)// Zag-Zag (Right Right)
         {
             // Bring the key as root of right-right and do first rotation
-            root->right->right = splay(root->right->right, ticker);
+            root->right->right = search(root->right->right, ticker);
             root = leftRotate(root);
         }
  
         // Do second rotation for root
         return (root->right == NULL) ? root: leftRotate(root);
     }
+}
+
+int ticker_check(char *token)
+{
+	int i=0;
+	int flag;
+	if(token == NULL)
+	{
+		printf("Bad ticker\n");
+		return flag = 0;	
+	}
+	if(!isalpha(token[i]))
+	{
+		return flag = 0;
+	}
+	
+	return flag = 1;
 }
 
 int input_cash(char *token)
@@ -196,6 +208,11 @@ int input_cents (char *token)
 		printf("%s - stock ignored\n", token);
 		return flag = 0;
 	}
+	if(strlen(token) < MAX_CENTS)
+	{
+		printf("NOT enough sense\n");
+		return flag = 0;
+	}
 	for(index = 0; index < strlen(token); index++)
 	{
 		if(!isdigit(token[index]))
@@ -205,6 +222,16 @@ int input_cents (char *token)
 		}
 	}
 	return flag = 1;
+}
+
+char *two_cents(char *token)
+{
+	if(strlen(token) > MAX_CENTS)
+	{
+		token[MAX_CENTS] = '\0';
+	}
+	
+	return token;
 }
 
 int price_check(char *token)
@@ -259,6 +286,11 @@ int cent_check(char *token)
 		printf("It's not difficult, just get it right.\n");
 		return flag = 0;
 	}
+	if(strlen(token) < MAX_CENTS)
+	{
+		printf("NOT ENOUGH CENTS\n");
+		return flag = 0;
+	}
 	for(index = 0; index <strlen(token); index++)
 	{
 		if(!isdigit(token[index])) 
@@ -301,15 +333,8 @@ void print_node(stock *root)
 	{
 		print_node(root->left);
 	}
-	printf("%s %d ", root->ticker, root->cost);
-	if(root->company != NULL)
-	{
-		printf("%s\n", root->company);
-	}
-	else 
-	{
-		puts(" ");
-	}
+	float divide = (float)root->cost / 100;
+	printf("%s %.2f %s\n", root->ticker, divide, root->company);
 	if (root -> right)
 	{
 		print_node(root->right);
@@ -329,3 +354,93 @@ destroy_stocks (stock * tree)
   free (tree->company);
   free (tree);
 }
+
+	
+size_t tree_size(stock *root)
+{
+	size_t count = 1;
+	if(!root)
+	{
+		return 0;
+	}
+	count += tree_size(root->left);
+	count += tree_size(root->right);
+	
+	return count;
+}
+
+void traverse(stock *tree)
+{
+	if(tree == NULL)
+	{
+		return;
+	}
+	traverse(tree->left);
+	traverse(tree->right);
+}
+stock *new_tree(stock *tree, stock *second, void(*traverse)(stock*),
+		 stock*(*Insert_num)(stock *, int, char *, char *)) 
+	{
+		if(tree == NULL)
+		{
+			return second;
+		}
+		traverse(tree);
+		second = Insert_num(second, tree->cost, tree->company, tree->ticker);
+		traverse(tree);
+		return second;
+		
+	}
+
+stock *Insert_num(stock *root, int cost, char *company, char *ticker)
+{
+  
+
+  if (root == NULL)
+    {
+      root = calloc (1, sizeof (stock));
+      if (root == NULL)
+	{
+	  printf ("Memory Error");
+	  return NULL;
+	}
+      else
+	{
+	
+		if(company == NULL)
+		{
+			root -> company = NULL;
+		}
+		else 
+		{
+			root->company = calloc(1, MAX_CO_SIZE+1);
+			strncpy(root->company, company, MAX_CO_SIZE);
+		}
+		
+	  	root->cost = cost;
+		root->left = root->right = NULL;
+		strncpy(root->ticker, ticker, MAX_TICKER_LEN);
+	}
+    }
+
+  else
+    {
+    
+      if (cost < root->cost)
+	{
+	  root->left = Insert_num(root->left, cost, company, ticker);
+	}
+      else if (cost > root->cost)
+	{
+	  root->right = Insert_num(root->right, cost, company, ticker);
+	}
+      else
+	{
+	  return root;
+	}
+
+    }
+  return root;
+}
+ 
+
