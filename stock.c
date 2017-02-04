@@ -187,6 +187,26 @@ int input_cash(char *token)
 	return flag = 1;
 }
 
+int input_cents (char *token)
+{
+	int flag;
+	size_t index = 0;
+	if(token == NULL)
+	{
+		printf("%s - stock ignored\n", token);
+		return flag = 0;
+	}
+	for(index = 0; index < strlen(token); index++)
+	{
+		if(!isdigit(token[index]))
+		{
+			printf("%s - stock ignored\n", token);
+			return flag = 0;
+		}
+	}
+	return flag = 1;
+}
+
 int price_check(char *token)
 {
 	size_t index = 0;
@@ -238,11 +258,6 @@ int cent_check(char *token)
 	{
 		printf("It's not difficult, just get it right.\n");
 		return flag = 0;
-	}
-	if(strlen(token) > MAX_CENTS)
-	{	
-		printf("Too much sense, wait i mean cents\n");
-		return flag =0;;
 	}
 	for(index = 0; index <strlen(token); index++)
 	{
