@@ -91,7 +91,8 @@ leftRotate perfoms a single rotation. The root node assigns it self as the right
 child of it's left childs node.  The left child then assigns it's self as 
 root. This rotates the tree once to the left, raising the new root one level.
 
-CITE: http://www.geeksforgeeks.org/splay-tree-set-1-insert/
+CITE: leftRotate was taken and modified from
+http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
 stock *leftRotate(stock *root);
 
@@ -110,7 +111,8 @@ would be parent of the ticker being searched.
 When splaying, the function will call right or left rotate to move the node 
 being moved to the root of the tree. 
 
-CITE: http://www.geeksforgeeks.org/splay-tree-set-1-insert/
+CITE: search was taken and modified from
+http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
 stock *search(stock *root, char *ticker);
 
