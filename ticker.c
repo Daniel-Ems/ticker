@@ -18,10 +18,10 @@ enum {MAX_TICKER_SIZE = 6};
 
 //Code modified from BST code 
 typedef struct stock{
-    size_t cost;
+    int cost;
 	char *company;
 	char ticker[6];
-	bool isStock;
+
     struct stock *left;
     struct stock *right;
 } stock;
@@ -29,7 +29,7 @@ typedef struct stock{
 
 
 // Code taken from intersector, used to organize tree alphabetically.
-stock *Insert(stock *root, size_t cost, char *company, char *ticker)
+stock *Insert(stock *root, int cost, char *company, char *ticker)
 {
   int result;
 
@@ -54,7 +54,7 @@ stock *Insert(stock *root, size_t cost, char *company, char *ticker)
 			root->company = calloc(1, MAX_CO_SIZE);
 			strncpy(root->company, company, MAX_CO_SIZE);
 		}
-		root->isStock = false;
+		
 	  	root->cost = cost;
 		root->left = root->right = NULL;
 		strncpy(root->ticker, ticker, strlen(ticker));
@@ -89,7 +89,7 @@ void print_node(stock *root)
 	{
 		print_node(root->left);
 	}
-	printf("%s %zd ", root->ticker, root->cost);
+	printf("%s %d ", root->ticker, root->cost);
 	if(root->company != NULL)
 	{
 		printf("%s\n", root->company);
@@ -132,6 +132,29 @@ destroy_stocks (stock * tree)
   free (tree);
 }
 
+void maff(stock *tree, int cost)
+{
+	if(cost < 0)
+	{
+		if(tree->cost + cost < 01)
+		{
+			printf("You have subtracted too much, operation ignored\n");
+			return;
+		}
+		tree->cost += cost;
+	}
+	else 
+	{
+		if(tree->cost + cost > 100000000)
+		{
+			printf("You have added too much, operation ignored\n");
+			return;
+		}
+		tree->cost += cost;
+	}
+}
+		
+	
 // This function brings the key at root if key is present in tree.
 // If key is not present, then it brings the last accessed item at
 // root.  This function modifies the tree and returns the new root
@@ -147,7 +170,6 @@ stock *splay(stock *root, char *ticker)
 	int result = strcasecmp(ticker, root->ticker);
 	if (result == 0)
 	{
-		root->isStock = true;
 		return root;
 	}
  
@@ -183,7 +205,7 @@ stock *splay(stock *root, char *ticker)
         }
  
         // Do second rotation for root
-        return (root->left == NULL)? root: rightRotate(root);
+        return (root->left == NULL) ? root: rightRotate(root);
     }
     else // Key lies in right subtree
     {
@@ -213,7 +235,7 @@ stock *splay(stock *root, char *ticker)
         }
  
         // Do second rotation for root
-        return (root->right == NULL)? root: leftRotate(root);
+        return (root->right == NULL) ? root: leftRotate(root);
     }
 }
  
@@ -285,8 +307,8 @@ main (int argc, char *argv[])
 
  	char *token;
  	char ticker[6] = {0};
-	size_t cost;
-	char *company = calloc(1, MAX_CO_SIZE+1);
+	int cost;
+	char *company = calloc(1, MAX_CO_SIZE);
 	
 
  	while(fgets(buf, LINE_SIZE, stockFile))
@@ -320,44 +342,56 @@ main (int argc, char *argv[])
 		memset(ticker, '\0', strlen(ticker));
 	
 	}
+
+	free(company);
 	print_node(tree);
-	
+
+	int result;
+
 	while(fgets(buf, LINE_SIZE, stdin))
  	{
+		result = 0;
 		token = strtok(buf, " \n\t");
 		strncpy(ticker, token, strlen(token));
+
 		tree = search(tree, ticker);
-		printf("%s\n", tree->isStock ? "true" : "false");
+
+		result = strcasecmp(tree->ticker, ticker);
 		while(token != NULL)
 		{
 			token = strtok(NULL, ".\t\n");
+		
 			cost = strtol(token, NULL, 10);
+			printf("%d\n", cost);
 			cost *= 100;
+			printf("%d\n", cost);
 			token = strtok(NULL, " \n");
-			cost += strtol(token, NULL, 10);
+			cost -= strtol(token, NULL, 10);
+			printf("%d\n", cost);
 			token = NULL;
 			
 			
 		}
-		tree = Insert(tree, cost, company, ticker);
+		if(result == 0)
+		{
+			maff(tree, cost);
+			printf("%d\n", tree->cost);
+		}
+		else
+		{
+			company = NULL;
+			tree = Insert(tree, cost, company, ticker);
+		}
 		memset(buf, '\0', strlen(buf));
-		memset(company, '\0', strlen(company));
 		memset(ticker, '\0', strlen(ticker));
 	
 	}
 		
-
-
-		puts(" ");
-		printf("%s %zd \n", tree->ticker, tree->cost);
-		puts(" ");
-
-		//free(term);
 		print_node(tree);
-		destroy_stocks(tree);
-		//free(test);
-		free(company);
+
+		//free(company);
 		free(buffer);
+		destroy_stocks(tree);
 		fclose(stockFile);
 	
 }
