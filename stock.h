@@ -19,6 +19,8 @@
 enum {LINE_SIZE = 256};
 enum {MAX_CO_SIZE = 64};
 enum {MAX_TICKER_LEN = 6};
+enum {MAX_DIGITS = 7};
+enum {MAX_CENTS = 2};
 
 //Code modified from BST code 
 typedef struct stock{
@@ -35,6 +37,8 @@ stock *rightRotate(stock *root);
 stock *leftRotate(stock *root);
 stock *search(stock *root, char *ticker);
 stock *splay(stock *root, char *ticker);
+int cent_check(char *token);
+int price_check(char *token);
 void maff(stock *tree, int cost);
 void print_node(stock *root);
 void destroy_stocks (stock * tree);
