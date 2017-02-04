@@ -1,6 +1,5 @@
-
 #include "stock.h"
-	
+
 int
 main (int argc, char *argv[])
 {
@@ -89,15 +88,15 @@ main (int argc, char *argv[])
 			cost *= 100;
 
 			token = strtok(NULL, " \n");
-			//flag = input_cents(token);
-			/*
+			flag = input_cents(token);
 			if(flag == 0)
 			{
 				token = NULL;
 				continue;
 			}
-			*/
-			cost += strtol(token, NULL, 10);
+			cents = strtol(token, NULL, 10);
+			
+			cost += cents;
 			
 			token = strtok(NULL, "\n");
 			if(token == NULL)
