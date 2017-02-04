@@ -30,7 +30,7 @@ stock *Insert(stock *root, int cost, char *company, char *ticker)
 		
 	  	root->cost = cost;
 		root->left = root->right = NULL;
-		strncpy(root->ticker, ticker, strlen(ticker));
+		strncpy(root->ticker, ticker, MAX_TICKER_LEN);
 	}
     }
 
@@ -157,6 +157,76 @@ stock *splay(stock *root, char *ticker)
     }
 }
 
+int price_check(char *token)
+{
+	size_t index = 0;
+	size_t value = 0;
+	int flag = 0;
+	if(token == NULL)
+	{
+		printf("It's not difficult, just get it right.\n");
+		return flag = 0;
+	}
+
+	if(token[0] == '-')
+	{
+		if(strlen(token) > MAX_DIGITS+1)
+		{
+			printf("The cost can only be 7 digits\n");
+			return flag = 0;
+		}		
+		value = 1;
+	}
+
+	else
+	{
+		if(strlen(token) > MAX_DIGITS)
+		{
+			printf("The cost can only be 7 digits\n");
+			return flag = 0;
+		}	
+		value = 0;
+	}
+
+	for(index = value; index <strlen(token); index++)
+	{
+		if(!isdigit(token[index])) 
+		{
+			printf("You messed up\n");
+			return flag = 0;
+		}
+	}
+	return flag = 1;
+}
+
+int cent_check(char *token)
+{
+	size_t index = 0;
+	int flag = 0;
+
+	if(token == NULL)
+	{
+		printf("It's not difficult, just get it right.\n");
+		return flag = 0;
+	}
+	if(strlen(token) > MAX_CENTS)
+	{	
+		printf("Too much sense, wait i mean cents\n");
+		return flag =0;;
+	}
+	for(index = 0; index <strlen(token); index++)
+	{
+		if(!isdigit(token[index])) 
+		{
+			printf("So close! But close is only good for horse shoes "
+					"and hand grenades, try again\n");
+			return flag = 0;
+			
+		}
+	}
+	return flag = 1;
+}
+
 void maff(stock *tree, int cost)
 {
 	if(cost < 0)
@@ -166,7 +236,7 @@ void maff(stock *tree, int cost)
 			printf("You have subtracted too much, operation ignored\n");
 			return;
 		}
-		tree->cost = cost;
+		tree->cost += cost;
 	}
 	else 
 	{
