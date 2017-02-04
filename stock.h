@@ -37,6 +37,7 @@ stock *rightRotate(stock *root);
 stock *leftRotate(stock *root);
 stock *search(stock *root, char *ticker);
 stock *splay(stock *root, char *ticker);
+int input_cash(char *token);
 int cent_check(char *token);
 int price_check(char *token);
 void maff(stock *tree, int cost);
