@@ -7,7 +7,7 @@ CFLAGS+=-std=c11
 LDLIBS+=-lm
 
 BIN=ticker
-DEPS=ticker.o 
+DEPS=ticker.o stock.o 
 
 $(BIN) : $(DEPS)
 
