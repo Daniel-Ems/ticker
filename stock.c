@@ -157,6 +157,36 @@ stock *splay(stock *root, char *ticker)
     }
 }
 
+int input_cash(char *token)
+{
+	int flag;
+	size_t index = 0;
+	if(token == NULL)
+	{
+		printf("%s - stock ignored\n", token);
+		return flag = 0;
+	}
+	if(token[0] == '-')
+	{
+		printf("%s - stock ignored\n", token);
+		return flag = 0;
+	}
+	if(strlen(token) > MAX_DIGITS)
+	{
+		printf("%s - stock ignored\n", token);
+		return flag = 0;
+	}
+	for(index = 0; index < strlen(token); index++)
+	{
+		if(!isdigit(token[index]))
+		{
+			printf("%s - stock ignored\n", token);
+			return flag = 0;
+		}
+	}
+	return flag = 1;
+}
+
 int price_check(char *token)
 {
 	size_t index = 0;
