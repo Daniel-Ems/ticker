@@ -57,12 +57,60 @@ Datastructres and Algorithims I.
 stock *Insert(stock *root, int cost, char *company, char *ticker);
 
 /*******************************************************************************
+stock *Insert_num(stock *root, int cost, char *company, char *ticker)
+
+->stock *root is the new tree's root
+->int cost is the old tree cost
+->char *company is the old tree's company
+->char *ticker is the old trees ticker
+
+This function will create a BST by comparing costs. 
+*******************************************************************************/
+stock *Insert_num(stock *root, int cost, char *company, char *ticker);
+
+/*******************************************************************************
+stock *rightRotate(stock *root)
+
+->stock *root is the root node. 
+
+rightRotate perfoms a single rotation. The root node assigns it self as the left
+child of it's right childs node.  The right child then assigns it's self as 
+root. This rotates the tree once to the right, raising the new root one level. 
+
+CITE: rightRootate was taken and modified from
+http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
 stock *rightRotate(stock *root);
+
 /*******************************************************************************
+stock *leftRotate(stock *root)
+
+->stock *root is the root node. 
+
+leftRotate perfoms a single rotation. The root node assigns it self as the right
+child of it's left childs node.  The left child then assigns it's self as 
+root. This rotates the tree once to the left, raising the new root one level.
+
+CITE: http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
 stock *leftRotate(stock *root);
+
 /*******************************************************************************
+stock *search(stock *root, char *ticker)
+
+->stock *root is the root node of the tree being searched.
+->char *ticker is the ticker being searced. 
+
+the search function will look for the ticker and then splay the tree 
+appropriately. The tree will compare the ticker's and the move recursively 
+through out the tree until a match is found or null. Once the search has found
+one of these two cases the function will either splay the matched node, or the 
+would be parent of the ticker being searched. 
+
+When splaying, the function will call right or left rotate to move the node 
+being moved to the root of the tree. 
+
+CITE: http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
 stock *search(stock *root, char *ticker);
 
@@ -217,10 +265,23 @@ CITE: The function destroy_stock was modified from the BSTnode exercise
 handed out during Datastructures and Algorithims I.
 *******************************************************************************/
 void destroy_stocks (stock * tree);
-void traverse(stock *tree);
 
-stock * new_tree(stock *tree, stock *second, void(*traverse)(stock *),
+/*******************************************************************************
+stock * new_tree(stock *tree, stock *second, 
+		 stock*(*Insert_num)(stock *, int, char *,char *))
+
+->stock *tree is root to the old tree
+->stock *second is the root to the new tree
+->Insert_num is a function pointer to Insert_num
+
+The function passes the tree already built to the new insert function along with
+the new node, creates the node, and then traverses the old tree building out 
+the new tree one by one.
+
+CITE: The development of this prototype was assisted by John Haulbrich. 
+*******************************************************************************/
+stock * new_tree(stock *tree, stock *second, 
 		 stock*(*Insert_num)(stock *, int, char *,char *));
 
-stock *Insert_num(stock *root, int cost, char *company, char *ticker);
+
 #endif
