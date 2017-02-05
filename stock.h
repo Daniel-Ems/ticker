@@ -241,19 +241,6 @@ during Datastructures and Algorithims I.
 *******************************************************************************/
 void print_node(stock *root);
 
-/*******************************************************************************
-size_t tree_size(stock *root)
-
-->stock *tree points to the root of the tree.
-
-tree_size will recursively call it's incrementing a counter with each node it
-finds. The function the returns the counter to determine how many nodes are in 
-the tree.
-
-CITE: The function tree_size was modified from the BSTnode exercise handed out 
-during Datastructures and Algorithims I.
-*******************************************************************************/
-size_t tree_size(stock *root);
 
 /*******************************************************************************
 void destroy_stocks(stock *tree)
