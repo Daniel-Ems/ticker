@@ -16,11 +16,16 @@
 #include <strings.h>
 
 
-enum {LINE_SIZE = 256};//Max line I will allow
-enum {MAX_CO_SIZE = 64};//Max company name
-enum {MAX_TICKER_LEN = 6};//Max ticker length
-enum {MAX_DIGITS = 7};//Max number of digits 
-enum {MAX_CENTS = 2};//Max number of cents
+enum
+{ LINE_SIZE = 256 };		//Max line I will allow
+enum
+{ MAX_CO_SIZE = 64 };		//Max company name
+enum
+{ MAX_TICKER_LEN = 6 };		//Max ticker length
+enum
+{ MAX_DIGITS = 7 };		//Max number of digits 
+enum
+{ MAX_CENTS = 2 };		//Max number of cents
 
 /*******************************************************************************
 typedef struct stock defines the charachteristics of stock nodes; 
@@ -30,12 +35,13 @@ char *company,
 char *ticker
 and two stock pointers.
 *******************************************************************************/
-typedef struct stock{
-    int cost;
-	char *company;
-	char ticker[6];
-    struct stock *left;
-    struct stock *right;
+typedef struct stock
+{
+  int cost;
+  char *company;
+  char ticker[6];
+  struct stock *left;
+  struct stock *right;
 } stock;
 
 /*******************************************************************************
@@ -54,7 +60,7 @@ created. If tree==NULL, a new node is created.
 CITE: The function Insert was modified from the BSTnode exercise given during
 Datastructres and Algorithims I.
 *******************************************************************************/
-stock *Insert(stock *root, int cost, char *company, char *ticker);
+stock *Insert (stock * root, int cost, char *company, char *ticker);
 
 /*******************************************************************************
 stock *Insert_num(stock *root, int cost, char *company, char *ticker)
@@ -66,7 +72,7 @@ stock *Insert_num(stock *root, int cost, char *company, char *ticker)
 
 This function will create a BST by comparing costs. 
 *******************************************************************************/
-stock *Insert_num(stock *root, int cost, char *company, char *ticker);
+stock *Insert_num (stock * root, int cost, char *company, char *ticker);
 
 /*******************************************************************************
 stock *rightRotate(stock *root)
@@ -80,7 +86,7 @@ root. This rotates the tree once to the right, raising the new root one level.
 CITE: rightRootate was taken and modified from
 http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
-stock *rightRotate(stock *root);
+stock *rightRotate (stock * root);
 
 /*******************************************************************************
 stock *leftRotate(stock *root)
@@ -94,7 +100,7 @@ root. This rotates the tree once to the left, raising the new root one level.
 CITE: leftRotate was taken and modified from
 http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
-stock *leftRotate(stock *root);
+stock *leftRotate (stock * root);
 
 /*******************************************************************************
 stock *search(stock *root, char *ticker)
@@ -114,7 +120,7 @@ being moved to the root of the tree.
 CITE: search was taken and modified from
 http://www.geeksforgeeks.org/splay-tree-set-1-insert/
 *******************************************************************************/
-stock *search(stock *root, char *ticker);
+stock *search (stock * root, char *ticker);
 
 /*******************************************************************************
 int ticker_check(char *token)
@@ -129,7 +135,7 @@ Error Checking
 ->token != NULL
 ->isalpha(token[0])
 *******************************************************************************/
-int ticker_check(char *token);
+int ticker_check (char *token);
 
 /*******************************************************************************
 int input_cash(char *token)
@@ -146,7 +152,7 @@ Error Checking
 ->isdigit(token[?})
 ->token > 0
 *******************************************************************************/
-int input_cash(char *token);
+int input_cash (char *token);
 
 /*******************************************************************************
 int input_cents(char *token)
@@ -175,7 +181,7 @@ fractions are present, they are replace with a null byte.
 Error Checking 
 ->strlen(token) == MAX_DIGITS
 *******************************************************************************/
-char *two_cents(char *token);
+char *two_cents (char *token);
 
 /*******************************************************************************
 int cent_check(char *token)
@@ -192,7 +198,7 @@ Error Checking
 ->strlen(token) == MAX_CENTS
 ->isdidgit(token[?])
 *******************************************************************************/
-int cent_check(char *token);
+int cent_check (char *token);
 
 /*******************************************************************************
 int price_check(char *token)
@@ -209,7 +215,7 @@ Error Checking
 ->isdigit(token[?})
 ->if token is negative, adjust error handling accordingly. 
 *******************************************************************************/
-int price_check(char *token);
+int price_check (char *token);
 
 /*******************************************************************************
 void maff(stock *tree, int cost)
@@ -225,7 +231,7 @@ Error Checking
 ->tree->cost >= 0.01
 ->tree->cost <= 1,000,000 
 *******************************************************************************/
-void maff(stock *tree, int cost);
+void maff (stock * tree, int cost);
 
 /******************************************************************************
 void print_node(stock *tree) 
@@ -239,7 +245,7 @@ the print process.
 CITE: The function print_node was modified from the BSTnode exercise handed out 
 during Datastructures and Algorithims I.
 *******************************************************************************/
-void print_node(stock *root);
+void print_node (stock * root);
 
 
 /*******************************************************************************
@@ -269,8 +275,8 @@ the new tree one by one.
 
 CITE: The development of this prototype was assisted by John Haulbrich. 
 *******************************************************************************/
-stock * new_tree(stock *tree, stock *second, 
-		 stock*(*Insert_num)(stock *, int, char *,char *));
+stock *new_tree (stock * tree, stock * second,
+		 stock * (*Insert_num) (stock *, int, char *, char *));
 
 
 #endif
