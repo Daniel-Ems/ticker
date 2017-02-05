@@ -51,55 +51,54 @@ main (int argc, char *argv[])
   stock *tree = NULL; 
 
 	char buf[LINE_SIZE];
-		
-
- 	char *token;
+	
+ 	char *token; //strtok token
  	char ticker[MAX_TICKER_LEN] = {0};
-	int cost;
+	int cost; //dollars and total cost of stock.
 	char *company = calloc(1, MAX_CO_SIZE+1);
-	int flag = 0;
-	int result=0;
-	int cents = 0;
-	//int rip_cord = 0;
+	int flag = 0;//error flag
+	int result=0;//strcasecmp result
+	int cents = 0;//stock price cents
 
+	//file i/o
  	while(fgets(buf, LINE_SIZE, stockFile))
  	{
 		token = strtok(buf, " \n\t");
-		flag = ticker_check(token);
+		flag = ticker_check(token);//Error handling for ticker
 		if(flag == 0)
 		{
-			token = NULL;
+			token = NULL;//Skip to next line of file
 		}	
 		else
 		{
-			strncpy(ticker, token, MAX_TICKER_LEN);		
+			strncpy(ticker, token, MAX_TICKER_LEN);//copy token to ticker		
 		}
 		while(token != NULL)
 		{
 			token = strtok(NULL, ".\t\n");
-			flag = input_cash(token);
+			flag = input_cash(token);//Error handling for dollars
 			if(flag == 0)
 			{
-				token = NULL;
+				token = NULL;//skip to next line of file
 				continue;
 			}
 
-			cost = strtol(token, NULL, 10);
-			cost *= 100;
+			cost = strtol(token, NULL, 10);//turn into int
+			cost *= 100;//turn dollars to cents
 
 			token = strtok(NULL, " \n");
-			flag = input_cents(token);
+			flag = input_cents(token);//Error Handling for cents
 			if(flag == 0)
 			{
-				token = NULL;
+				token = NULL;//Skip to next line of file
 				continue;
 			}
-			token = two_cents(token);
+			token = two_cents(token);//chop off cent fractions
 
-			cents = strtol(token, NULL, 10);
+			cents = strtol(token, NULL, 10);//turn into int
 			
 			
-			cost += cents;
+			cost += cents;//add dollars/100 and cents
 			
 			token = strtok(NULL, "\n");
 			if(token == NULL)
@@ -109,32 +108,29 @@ main (int argc, char *argv[])
 			}
 			else 
 			{
+				//Company can be called anything
 			    strncpy(company, token, MAX_CO_SIZE);
 				token = NULL;
 			}
 			
 		}
+		//No errors found
 		if(flag == 1)
 		{
 			tree = Insert(tree, cost, company, ticker);
 		}
+		//clear buffers for next line if file.
 		memset(buf, '\0', LINE_SIZE);
 		memset(company, '\0', MAX_CO_SIZE);
 		memset(ticker, '\0', MAX_TICKER_LEN);
 	
 	}
 
-	//free(company);
-	print_node(tree);
-
-	
-	
+	//User i/o
 	while(fgets(buf, LINE_SIZE, stdin))
  	{
-		
-
 		token = strtok(buf, " \n\t");
-		flag = ticker_check(token);
+		flag = ticker_check(token);//Error handlign for ticker
 		if(flag == 0)
 		{
 			token = NULL;
@@ -143,18 +139,16 @@ main (int argc, char *argv[])
 		{
 			strncpy(ticker, token, MAX_TICKER_LEN);
 
-			tree = search(tree, ticker);
+			tree = search(tree, ticker);//move ticker or it's parent to root
 
-			printf("%s\n", tree->ticker);
-
-			result = strcasecmp(tree->ticker, ticker);		
+			result = strcasecmp(tree->ticker, ticker);//is ticker present	
 		}
 		while(token != NULL)
 		{
 
 			token = strtok(NULL, ".\t\n");
 			
-			flag = price_check(token);
+			flag = price_check(token);//Error handling for dollars
 
 			if(flag == 0)
 			{
@@ -168,7 +162,7 @@ main (int argc, char *argv[])
 		
 			token = strtok(NULL, " \n");
 
-			flag = cent_check(token); 
+			flag = cent_check(token); //Error handing for cents
 			if(flag == 0)
 			{
 				token = NULL;
@@ -178,7 +172,7 @@ main (int argc, char *argv[])
 			token = two_cents(token);
 			cents = strtol(token, NULL, 10);
 	
-			if(cost < 0)
+			if(cost < 0)//adding or subtracting cents
 			{
 				cost -= cents;
 			}		
@@ -202,20 +196,24 @@ main (int argc, char *argv[])
 
 			token = NULL;
 		}
-
+		//No Errors found
 		if(flag == 1)
 		{
 			if(result == 0)
 			{
-				maff(tree, cost);
-				//printf("%d\n", tree->cost);
+				maff(tree, cost);//Adjust stock price accordingly
 			}
-			else if(cost < 0)
+			else if(cost < 01)
 			{
-				printf("New companies can not start with negative stocks\n");
+				printf("New companies can not start below $00.01\n");
+			}
+			else if(cost > 100000000)
+			{
+				printf("Max starting price is $1,000,000");
 			}
 			else
 			{
+				//Insert new ticker and starting price
 				tree = Insert(tree, cost, company, ticker);
 			}
 		}
@@ -225,16 +223,13 @@ main (int argc, char *argv[])
 		memset(ticker, '\0', MAX_TICKER_LEN);
 	}
 		
-		size_t numNodes = tree_size(tree);
-		printf("%zd\n", numNodes);
 		stock *new = NULL;
-		new = new_tree(new, tree, traverse, Insert_num);
-
+		new = new_tree(tree, new, Insert_num);
 		print_node(new);
 
-		//print_node(tree);
 		free(company);
 		free(buffer);
+		destroy_stocks(new);
 		destroy_stocks(tree);
 		fclose(stockFile);
 	
